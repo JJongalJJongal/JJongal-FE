@@ -9,7 +9,6 @@
 
 - **React Native**  
 - **JavaScript / TypeScript (미정)**  
-- **Expo**  
 - API 연동: FastAPI (Backend)
 
 ---
