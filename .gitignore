@@ -32,3 +32,49 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# macOS 관련
+.DS_Store
+
+# node modules
+node_modules/
+
+# Android 빌드 파일
+android/app/build/
+android/build/
+
+# iOS 빌드 파일
+ios/build/
+ios/Pods/
+
+# 기타 빌드/캐시
+*.lock
+.expo/
+dist/
+coverage/
+tmp/
+.cache/
+
+# Metro bundler 캐시
+metro-cache/
+.buckd/
+
+# Gradle
+android/.gradle/
+android/.idea/
+android/local.properties
+
+# Xcode
+ios/DerivedData/
+ios/*.xcodeproj/
+ios/*.xcworkspace/
+
+# OS 또는 에디터 관련
+.vscode/
