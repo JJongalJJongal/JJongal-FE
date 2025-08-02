@@ -8,7 +8,6 @@
 ## 📱 기술 스택
 
 - **React Native**  
-- **JavaScript / TypeScript (미정)**  
 - API 연동: FastAPI (Backend)
 
 ---
