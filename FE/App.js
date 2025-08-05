@@ -7,23 +7,14 @@ import LoginScreen from './screens/LoginScreen';
 import UserInfoScreen from './screens/UserInfoScreen';
 import UserInfo2Screen from './screens/UserInfoScreen2';
 
-import { GOOGLE_WEB_CLIENT_ID } from '@env';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  useEffect(() => {
-    console.log('✅ GOOGLE_WEB_CLIENT_ID:', GOOGLE_WEB_CLIENT_ID); // 👈 추가해보세요!
-    // GoogleSignin.configure({
-    //   webClientId: '', // 임시로 빈 값
-    //   offlineAccess: true,
-    // });
-  }, []);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="UserInfo" component={UserInfoScreen} />
