@@ -14,12 +14,12 @@ const LoadingPage = ({ navigation, route }) => {
 
   // 이미 가입한 유저일 시 : 메인 페이지로 이동
   const handleHome = () => {
-    navigation.replace('Home');
+    navigation.replace('Main');
   };
 
   // 처음 가입한 유저일 시 : 닉네임 설정 페이지로 이동
   const handleNickName = () => {
-    navigation.replace('NickName');
+    navigation.replace('UserInfo');
   };
 
   const handleLoginPost = async (code) => {
