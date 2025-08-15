@@ -1,6 +1,5 @@
 // LoginScreen.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +9,7 @@ import {
   Alert,
   Image
 } from 'react-native';
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { configureGoogleSignIn, signInWithGoogle } from '../login/googleSignIn';
 
 export default function LoginScreen({ navigation }) {
   const [userId, setUserId] = useState('');
@@ -18,58 +17,76 @@ export default function LoginScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
 
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
   const handleGoogleLogin = async () => {
-    // if (isSigningIn) return;
-    // setIsSigningIn(true);
-
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   console.log('✅ Google userInfo:', userInfo);
-
-    //   const user =
-    //     userInfo.user ??               
-    //     userInfo.data?.user ??         
-    //     null;
-
-    //   if (!user || !user.email) {
-    //     Alert.alert('로그인 실패', '이메일 정보를 가져올 수 없습니다.');
-    //     return;
-    //   }
-
-    //   const isExistingUser = await checkIfUserExists(user.email);
-    //   if (isExistingUser) {
-    //     navigation.navigate('UserInfo');
-    //   } else {
-    //     navigation.navigate('UserInfo', { userInfo: user });
-    //   }
-    // } catch (error) {
-    //   console.error('Google 로그인 에러 ▶', error);
-    //   Alert.alert('로그인 중 오류가 발생했습니다.');
-    // } finally {
-    //   setIsSigningIn(false);
-    // }
-    
-    Alert.alert('Google 로그인', 'Google 로그인 기능은 준비 중입니다.');
-  };
-
-  const handleKakaoLogin = async () => {
+    setIsSigningIn(true);
     try {
-      Alert.alert('카카오 로그인', '카카오 로그인 기능은 준비 중입니다.');
-    } catch (e) {
-      console.error('Kakao 로그인 에러 ▶', e);
-      Alert.alert('카카오 로그인 중 오류가 발생했습니다.');
+      const result = await signInWithGoogle();
+      
+      if (result.success) {
+        // LoadingPage로 이동하여 백엔드 처리
+        navigation.navigate('LoadingPage', { 
+          code: result.serverAuthCode 
+        });
+      } else {
+        Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Google 로그인 에러 ▶', error);
+      Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsSigningIn(false);
     }
   };
+  
+  // const handleKakaoLogin = async () => {
+  //   try {
+  //     const result = await KakaoLogins.login();
+  //     const accessToken = result.accessToken;
+  
+  //     await fetch('http://your-backend/api/social-login/kakao', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ access_token: accessToken }),
+  //     });
+  
+  //     navigation.navigate('UserInfo');
+  //   } catch (error) {
+  //     console.error('Kakao 로그인 에러 ▶', error);
+  //     Alert.alert('카카오 로그인 실패', '로그인 중 오류가 발생했습니다.');
+  //   }
+  // };
+  
+  // const naverKeys = {
+  //   kConsumerKey: 'YOUR_NAVER_CLIENT_ID',
+  //   kConsumerSecret: 'YOUR_NAVER_CLIENT_SECRET',
+  //   kServiceAppName: 'YOUR_APP_NAME',
+  //   kServiceAppUrlScheme: 'naverlogin',
+  // };
+  
+  // const handleNaverLogin = () => {
+  //   NaverLogin.login(naverKeys, async (err, token) => {
+  //     if (err) {
+  //       console.error('Naver 로그인 에러 ▶', err);
+  //       Alert.alert('네이버 로그인 실패');
+  //       return;
+  //     }
+  
+  //     const accessToken = token.accessToken;
+  
+  //     await fetch('http://your-backend/api/social-login/naver', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ access_token: accessToken }),
+  //     });
+  
+  //     navigation.navigate('UserInfo');
+  //   });
+  // };
 
-  const handleNaverLogin = async () => {
-    try {
-      Alert.alert('네이버 로그인', '네이버 로그인 기능은 준비 중입니다.');
-    } catch (e) {
-      console.error('Naver 로그인 에러 ▶', e);
-      Alert.alert('네이버 로그인 중 오류가 발생했습니다.');
-    }
-  };
 
   const checkIfUserExists = async (email) => {
     return false;
@@ -141,7 +158,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.snsTitle}>SNS로 로그인하기</Text>
         
         <View style={styles.snsButtonContainer}>
-          <TouchableOpacity style={styles.snsButton} onPress={handleKakaoLogin}>
+          <TouchableOpacity style={styles.snsButton} onPress={() => Alert.alert('카카오 로그인', '준비 중입니다.')}>
             <View style={styles.kakaoIcon}>
               <Text style={styles.kakaoText}>TALK</Text>
             </View>
@@ -153,7 +170,7 @@ export default function LoginScreen({ navigation }) {
             </View>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.snsButton} onPress={handleNaverLogin}>
+          <TouchableOpacity style={styles.snsButton} onPress={() => Alert.alert('네이버 로그인', '준비 중입니다.')}>
             <View style={styles.naverIcon}>
               <Text style={styles.naverText}>N</Text>
             </View>
@@ -314,4 +331,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-}); 
+});
