@@ -22,20 +22,25 @@ export default function LoginScreen({ navigation }) {
   }, []);
 
   const handleGoogleLogin = async () => {
+    console.log('1. 구글 로그인 버튼 클릭됨'); // <--- 로그 추가
     setIsSigningIn(true);
     try {
+      console.log('2. signInWithGoogle 함수 호출 시작'); // <--- 로그 추가
       const result = await signInWithGoogle();
-      
+      console.log('3. signInWithGoogle 함수 결과 받음:', result); // <--- 로그 추가
+  
       if (result.success) {
-        // LoadingPage로 이동하여 백엔드 처리
+        console.log('성공! 서버 인증 코드:', result.serverAuthCode); // <--- 이 로그를 추가해서 코드를 확인
+        console.log('4. 로그인 성공! LoadingPage로 이동합니다.');
         navigation.navigate('LoadingPage', { 
           code: result.serverAuthCode 
         });
       } else {
+        console.log('4. 로그인 실패 (result.success가 false). 에러:', result.error); // <--- 로그 추가
         Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
       }
     } catch (error) {
-      console.error('Google 로그인 에러 ▶', error);
+      console.error('5. handleGoogleLogin에서 예외 발생:', error); // <--- 로그 추가
       Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
     } finally {
       setIsSigningIn(false);

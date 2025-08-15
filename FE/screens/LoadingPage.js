@@ -40,15 +40,22 @@ const LoadingPage = ({ navigation, route }) => {
       
       if (response.ok) {
         // 토큰 AsyncStorage에 저장 (React Native에서는 localStorage 대신 AsyncStorage 사용)
-        const accessToken = result.accessToken;
-        // AsyncStorage.setItem('bagtoken', accessToken); // AsyncStorage import 필요
-        
-        // 신규/기존 회원 여부에 따라 페이지 이동
-        if (result.isExistingMember) {
-          handleHome();
+        // const accessToken = result.accessToken; // 백엔드가 accessToken을 준다면 저장
+        // AsyncStorage.setItem('bagtoken', accessToken);
+
+        // ✅ 수정된 부분: isExistingMember 키가 있는지 먼저 확인
+        if (result.hasOwnProperty('isExistingMember')) {
+          if (result.isExistingMember) {
+            handleHome();
+          } else {
+            handleNickName();
+          }
         } else {
-          handleNickName();
+          // isExistingMember 키가 없는 경우, 로그인 성공으로 간주하고 메인 페이지로 이동
+          // (백엔드 응답 정책에 따라 handleNickName()으로 보낼 수도 있습니다)
+          handleHome();
         }
+
       } else {
         Alert.alert('로그인 실패', '로그인 중 오류가 발생했습니다.');
       }
