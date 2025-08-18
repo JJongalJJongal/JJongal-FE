@@ -79,8 +79,11 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container}>
       {/* PEEP 로고 */}
       <View style={styles.logoContainer}>
-        <Text style={styles.logoText}>PEEP</Text>
-        <Text style={styles.logoText}>PEEP</Text>
+        <Image 
+          source={require('../assets/temp/logo1.jpg')} 
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </View>
 
       {/* 입력 필드들 */}
@@ -123,16 +126,6 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
 
-      {/* 추가 링크들 */}
-      <View style={styles.linkContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('UserInfo')}>
-          <Text style={styles.linkText}>회원가입하기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.linkText}>아이디/비밀번호 찾기</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* SNS 로그인 섹션 */}
       <View style={styles.snsContainer}>
         <View style={styles.separator}>
@@ -160,6 +153,16 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* 추가 링크들 */}
+      <View style={styles.linkContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('UserInfo')}>
+          <Text style={styles.linkText}>회원가입하기</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.linkText}>아이디/비밀번호 찾기</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -175,15 +178,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  logoText: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#FFED84',
-    textShadowColor: 'rgba(0, 0, 0, 0.15)',
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 6,
-    letterSpacing: 3,
-    marginVertical: 5,
+  logoImage: {
+    width: 200,
+    height: 100,
   },
   inputContainer: {
     marginBottom: 30,
@@ -193,7 +190,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 25,
+    borderRadius: 10,
     paddingHorizontal: 20,
     marginBottom: 8,
     backgroundColor: '#fff',
@@ -208,7 +205,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 25,
+    borderRadius: 10,
     paddingHorizontal: 20,
     paddingRight: 50,
     backgroundColor: '#fff',
@@ -231,7 +228,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#FFED84',
-    borderRadius: 25,
+    borderRadius: 10,
     paddingVertical: 15,
     alignItems: 'center',
     marginBottom: 30,
@@ -241,17 +238,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
   },
-  linkContainer: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  linkText: {
-    color: '#999',
-    fontSize: 14,
-    marginVertical: 5,
-  },
   snsContainer: {
     alignItems: 'center',
+    marginBottom: 30,
   },
   separator: {
     width: '100%',
@@ -313,5 +302,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  linkContainer: {
+    alignItems: 'center',
+    marginTop: 'auto',
+    paddingBottom: 20,
+  },
+  linkText: {
+    color: '#999',
+    fontSize: 14,
+    marginVertical: 5,
   },
 }); 

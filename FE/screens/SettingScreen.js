@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function SettingScreen() {
@@ -127,17 +127,29 @@ export default function SettingScreen() {
       {/* 하단 네비게이션 */}
       <View style={styles.navigationBar}>
         <TouchableOpacity style={styles.navItem} onPress={handleHome}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <Image 
+            source={require('../assets/temp/icon_home.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={styles.navText}>홈</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navItem} onPress={handleLibrary}>
-          <Text style={styles.navIcon}>📚</Text>
+          <Image 
+            source={require('../assets/temp/icon_book.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={styles.navText}>책장</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navItem}>
-          <Text style={[styles.navIcon, styles.activeNavIcon]}>⚙️</Text>
+          <Image 
+            source={require('../assets/temp/icon_setting2.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={[styles.navText, styles.activeNavText]}>설정</Text>
         </TouchableOpacity>
       </View>
@@ -309,7 +321,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navIcon: {
-    fontSize: 24,
+    width: 24,
+    height: 24,
     marginBottom: 4,
     color: '#999',
   },
