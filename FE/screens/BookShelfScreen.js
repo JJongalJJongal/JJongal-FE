@@ -61,6 +61,10 @@ export default function BookShelfScreen() {
     console.log('삭제 버튼 클릭');
   };
 
+  const handleOpenStory = (story) => {
+    navigation.navigate('StoryDetail', { storyId: story.id, title: story.title });
+  };
+
   const handlePlayStory = (storyId) => {
     // TODO: 동화 재생 기능
     console.log('동화 재생:', storyId);
@@ -86,7 +90,11 @@ export default function BookShelfScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>나의 책장</Text>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.deleteIcon}>🗑️</Text>
+            <Image
+              source={require('../assets/temp/icon_trash.jpg')}
+              style={styles.deleteIconImage}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
 
@@ -116,17 +124,29 @@ export default function BookShelfScreen() {
         {/* 하단 네비게이션 */}
         <View style={styles.navigationBar}>
           <TouchableOpacity style={styles.navItem} onPress={handleHome}>
-            <Text style={styles.navIcon}>🏠</Text>
+            <Image 
+              source={require('../assets/temp/icon_home.jpg')} 
+              style={styles.navIcon}
+              resizeMode="contain"
+            />
             <Text style={styles.navText}>홈</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.navItem}>
-            <Text style={[styles.navIcon, styles.activeNavIcon]}>📚</Text>
+            <Image 
+              source={require('../assets/temp/icon_book2.jpg')} 
+              style={styles.navIcon}
+              resizeMode="contain"
+            />
             <Text style={[styles.navText, styles.activeNavText]}>책장</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.navItem} onPress={handleSettings}>
-            <Text style={styles.navIcon}>⚙️</Text>
+            <Image 
+              source={require('../assets/temp/icon_setting.jpg')} 
+              style={styles.navIcon}
+              resizeMode="contain"
+            />
             <Text style={styles.navText}>설정</Text>
           </TouchableOpacity>
         </View>
@@ -144,14 +164,18 @@ export default function BookShelfScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>나의 책장</Text>
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <Text style={styles.deleteIcon}>🗑️</Text>
+          <Image 
+            source={require('../assets/temp/icon_trash.jpg')} 
+            style={styles.deleteIconImage}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </View>
 
       {/* 동화책 목록 */}
       <ScrollView style={styles.storyList} showsVerticalScrollIndicator={false}>
         {stories.map((story) => (
-          <View key={story.id} style={styles.storyCard}>
+          <TouchableOpacity key={story.id} style={styles.storyCard} onPress={() => handleOpenStory(story)} activeOpacity={0.8}>
             <View style={styles.storyThumbnail}>
               <Text style={styles.placeholderText}>{story.thumbnail}</Text>
             </View>
@@ -170,27 +194,39 @@ export default function BookShelfScreen() {
                 <Text style={styles.playTriangle}>▶</Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
       {/* 하단 네비게이션 */}
       <View style={styles.navigationBar}>
         <TouchableOpacity style={styles.navItem} onPress={handleHome}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <Image 
+            source={require('../assets/temp/icon_home.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={styles.navText}>홈</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navItem}>
-          <Text style={[styles.navIcon, styles.activeNavIcon]}>📚</Text>
+          <Image 
+            source={require('../assets/temp/icon_book2.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={[styles.navText, styles.activeNavText]}>책장</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navItem} onPress={handleSettings}>
-          <Text style={styles.navIcon}>⚙️</Text>
-          <Text style={styles.navText}>설정</Text>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.navItem} onPress={handleSettings}>
+            <Image 
+              source={require('../assets/temp/icon_setting.jpg')} 
+              style={styles.navIcon}
+              resizeMode="contain"
+            />
+            <Text style={styles.navText}>설정</Text>
+          </TouchableOpacity>
+        </View>
     </View>
   );
 }
@@ -226,6 +262,10 @@ const styles = StyleSheet.create({
   },
   deleteIcon: {
     fontSize: 20,
+  },
+  deleteIconImage: {
+    width: 24,
+    height: 24,
   },
   emptyContent: {
     flex: 1,
@@ -382,7 +422,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navIcon: {
-    fontSize: 24,
+    width: 24, // Adjust as needed for image size
+    height: 24, // Adjust as needed for image size
     marginBottom: 4,
     color: '#999',
   },

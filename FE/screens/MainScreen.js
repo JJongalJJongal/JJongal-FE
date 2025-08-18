@@ -6,8 +6,8 @@ export default function MainScreen() {
   const navigation = useNavigation();
 
   const handleCreateStory = () => {
-    // TODO: 동화책 만들기 화면으로 이동
-    console.log('동화책 만들기 버튼 클릭');
+    // AITalk 화면으로 이동
+    navigation.navigate('AITalk');
   };
 
   const handleViewMore = () => {
@@ -29,7 +29,11 @@ export default function MainScreen() {
     <View style={styles.container}>
       {/* 메인 섹션 */}
       <View style={styles.mainSection}>
-        <Text style={styles.appName}>쫑알쫑알</Text>
+        <Image 
+          source={require('../assets/temp/logo2.jpg')} 
+          style={styles.appLogo}
+          resizeMode="contain"
+        />
         
         <View style={styles.titleContainer}>
           <Text style={styles.mainTitle}>상상력을 펼쳐보세요!</Text>
@@ -41,18 +45,19 @@ export default function MainScreen() {
         <View style={styles.charactersContainer}>
           <View style={styles.characterRow}>
             <View style={styles.chickContainer}>
-              <View style={styles.chick}>
-                <Text style={styles.chickEmoji}>🐤</Text>
-                <View style={styles.glasses}></View>
-                <View style={styles.cheek}></View>
-              </View>
+              <Image 
+                source={require('../assets/temp/main1.jpg')} 
+                style={styles.chickImage}
+                resizeMode="contain"
+              />
             </View>
             
             <View style={styles.chickContainer}>
-              <View style={styles.chick}>
-                <Text style={styles.chickEmoji}>🐤</Text>
-                <View style={styles.cheek}></View>
-              </View>
+              <Image 
+                source={require('../assets/temp/main2.jpg')} 
+                style={styles.chickImage}
+                resizeMode="contain"
+              />
               <View style={styles.speechBubble}>
                 <Text style={styles.speechText}>오늘은 또 어떤 이야기를 만들어볼까?</Text>
               </View>
@@ -111,17 +116,29 @@ export default function MainScreen() {
       {/* 하단 네비게이션 */}
       <View style={styles.navigationBar}>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <Image 
+            source={require('../assets/temp/icon_home2.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={styles.navText}>홈</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navItem} onPress={handleLibrary}>
-          <Text style={styles.navIcon}>📚</Text>
+          <Image 
+            source={require('../assets/temp/icon_book.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={styles.navText}>책장</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navItem} onPress={handleSettings}>
-          <Text style={styles.navIcon}>⚙️</Text>
+          <Image 
+            source={require('../assets/temp/icon_setting.jpg')} 
+            style={styles.navIcon}
+            resizeMode="contain"
+          />
           <Text style={styles.navText}>설정</Text>
         </TouchableOpacity>
       </View>
@@ -144,6 +161,12 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 16,
     color: '#666',
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+  },
+  appLogo: {
+    width: 100,
+    height: 50,
     alignSelf: 'flex-start',
     marginBottom: 20,
   },
@@ -177,35 +200,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  chick: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#FFF9C4',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+  chickImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
   chickEmoji: {
     fontSize: 30,
-  },
-  glasses: {
-    position: 'absolute',
-    top: 15,
-    width: 20,
-    height: 8,
-    borderWidth: 2,
-    borderColor: '#000',
-    borderRadius: 4,
-  },
-  cheek: {
-    position: 'absolute',
-    bottom: 10,
-    right: 8,
-    width: 8,
-    height: 8,
-    backgroundColor: '#FFB6C1',
-    borderRadius: 4,
   },
   speechBubble: {
     position: 'absolute',
@@ -224,11 +225,18 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: '#FFED84',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
-    borderWidth: 2,
-    borderColor: '#000',
+    paddingHorizontal: 60,
+    paddingVertical: 20,
+    borderRadius: 15,
+    borderWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   createButtonText: {
     fontSize: 18,
@@ -303,7 +311,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navIcon: {
-    fontSize: 24,
+    width: 24,
+    height: 24,
     marginBottom: 4,
   },
   navText: {
