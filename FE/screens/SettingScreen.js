@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Image, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function SettingScreen() {
@@ -61,21 +61,30 @@ export default function SettingScreen() {
     );
   };
 
+  const handleProfile = () => {
+    navigation.navigate('UserInfo', { mode: 'edit' });
+  };
+
+  const handleVoice = () => {
+    navigation.navigate('Voice');
+  };
+
   const menuItems = [
-    { id: 1, title: '개인정보 변경', icon: '👤', onPress: () => console.log('개인정보 변경') },
-    { id: 2, title: '부기 음성 변경', icon: '🎤', onPress: () => console.log('부기 음성 변경') },
-    { id: 3, title: '관심사 설정', icon: '❤️', onPress: handleInterests },
-    { id: 4, title: '구매 항목 및 멤버십', icon: '💎', onPress: () => console.log('구매 항목') },
-    { id: 5, title: '서비스 이용약관', icon: '📄', onPress: () => console.log('이용약관') },
-    { id: 6, title: '앱 버전', icon: 'ℹ️', onPress: () => console.log('앱 버전'), version: '1.0.0' },
+    { id: 1, title: '개인정보 변경', icon: require('../assets/temp/icon_profile.jpg'), onPress: handleProfile },
+    { id: 2, title: '부기 음성 변경', icon: require('../assets/temp/icon_mike3.png'), onPress: handleVoice },
+    { id: 3, title: '관심사 설정', icon: require('../assets/temp/icon_heart.jpg'), onPress: handleInterests },
+    { id: 4, title: '구매 항목 및 멤버십', icon: require('../assets/temp/icon_card.jpg'), onPress: () => {} },
+    { id: 5, title: '서비스 이용약관', icon: require('../assets/temp/icon_service.jpg'), onPress: () => {} },
+    { id: 6, title: '앱 버전', icon: require('../assets/temp/icon_info.jpg'), onPress: () => {}, version: '1.0.0' },
   ];
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backIcon}>←</Text>
+          <Image source={require('../assets/temp/icon_back.png')} style={styles.backIconImage} resizeMode="contain" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>설정</Text>
         <View style={styles.placeholder} />
@@ -85,10 +94,7 @@ export default function SettingScreen() {
       <View style={styles.profileSection}>
         <View style={styles.profileContainer}>
           <View style={styles.character}>
-            <Text style={styles.characterEmoji}>🐤</Text>
-            <View style={styles.characterGlasses}></View>
-            <View style={styles.characterCheek}></View>
-            <View style={styles.characterBook}></View>
+            <Image source={require('../assets/temp/main1.jpg')} style={styles.characterImage} resizeMode="contain" />
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>김삐삐</Text>
@@ -102,7 +108,7 @@ export default function SettingScreen() {
         {menuItems.map((item) => (
           <TouchableOpacity key={item.id} style={styles.menuItem} onPress={item.onPress}>
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <Image source={item.icon} style={styles.menuImageIcon} resizeMode="contain" />
               <Text style={styles.menuTitle}>{item.title}</Text>
             </View>
             <View style={styles.menuRight}>
@@ -163,11 +169,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 24,
   },
@@ -177,6 +183,10 @@ const styles = StyleSheet.create({
   backIcon: {
     fontSize: 20,
     color: '#000',
+  },
+  backIconImage: {
+    width: 24,
+    height: 24,
   },
   headerTitle: {
     fontSize: 20,
@@ -206,36 +216,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     marginRight: 15,
+    overflow: 'hidden',
   },
-  characterEmoji: {
-    fontSize: 30,
-  },
-  characterGlasses: {
-    position: 'absolute',
-    top: 15,
-    width: 24,
-    height: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    borderRadius: 5,
-  },
-  characterCheek: {
-    position: 'absolute',
-    bottom: 10,
-    right: 8,
-    width: 8,
-    height: 8,
-    backgroundColor: '#FFB6C1',
-    borderRadius: 4,
-  },
-  characterBook: {
-    position: 'absolute',
-    bottom: 25,
-    left: 8,
-    width: 12,
-    height: 15,
-    backgroundColor: '#87CEEB',
-    borderRadius: 2,
+  characterImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 30,
   },
   profileInfo: {
     flex: 1,
@@ -266,8 +252,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  menuIcon: {
-    fontSize: 20,
+  menuImageIcon: {
+    width: 24,
+    height: 24,
     marginRight: 12,
   },
   menuTitle: {

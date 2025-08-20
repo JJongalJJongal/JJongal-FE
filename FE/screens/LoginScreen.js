@@ -80,7 +80,7 @@ export default function LoginScreen({ navigation }) {
       {/* PEEP 로고 */}
       <View style={styles.logoContainer}>
         <Image 
-          source={require('../assets/temp/logo1.jpg')} 
+          source={require('../assets/temp/logo4.jpg')} 
           style={styles.logoImage}
           resizeMode="contain"
         />
@@ -135,21 +135,27 @@ export default function LoginScreen({ navigation }) {
         
         <View style={styles.snsButtonContainer}>
           <TouchableOpacity style={styles.snsButton} onPress={handleKakaoLogin}>
-            <View style={styles.kakaoIcon}>
-              <Text style={styles.kakaoText}>TALK</Text>
-            </View>
+            <Image 
+              source={require('../assets/temp/login_kakao.png')} 
+              style={styles.snsIcon}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.snsButton} onPress={handleGoogleLogin}>
-            <View style={styles.googleIcon}>
-              <Text style={styles.googleText}>G</Text>
-            </View>
+            <Image 
+              source={require('../assets/temp/login_google.png')} 
+              style={styles.snsIcon}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.snsButton} onPress={handleNaverLogin}>
-            <View style={styles.naverIcon}>
-              <Text style={styles.naverText}>N</Text>
-            </View>
+            <Image 
+              source={require('../assets/temp/login_naver.png')} 
+              style={styles.snsIcon}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -264,44 +270,9 @@ const styles = StyleSheet.create({
   snsButton: {
     alignItems: 'center',
   },
-  kakaoIcon: {
+  snsIcon: {
     width: 50,
     height: 50,
-    backgroundColor: '#FEE500',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  kakaoText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  googleIcon: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#4285F4',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  googleText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  naverIcon: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#03C75A',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  naverText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
   },
   linkContainer: {
     alignItems: 'center',

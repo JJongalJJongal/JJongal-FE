@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, StatusBar } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function UserInfoScreen() {
@@ -11,6 +11,8 @@ export default function UserInfoScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const isEditMode = route?.params?.mode === 'edit';
 
   const handleNext = () => {
     if (!userId) {
@@ -25,7 +27,7 @@ export default function UserInfoScreen() {
       Alert.alert('입력 오류', '비밀번호가 일치하지 않습니다.');
       return;
     }
-    navigation.navigate('UserInfo2');
+    navigation.navigate('UserInfo2', { mode: isEditMode ? 'edit' : undefined });
   };
 
   const handleDuplicateCheck = () => {
@@ -39,9 +41,15 @@ export default function UserInfoScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       {/* 헤더 */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>회원가입</Text>
+        {!isEditMode && (
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Image source={require('../assets/temp/icon_back.png')} style={styles.backIconImage} resizeMode="contain" />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.headerText}>{isEditMode ? '개인정보 변경' : '회원가입'}</Text>
       </View>
 
       {/* 진행률 표시줄 */}
@@ -119,7 +127,7 @@ export default function UserInfoScreen() {
         </View>
       </View>
 
-      {/* 다음 버튼 */}
+      {/* 완료/다음 버튼 */}
       <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
         <Text style={styles.nextButtonText}>다음</Text>
       </TouchableOpacity>
@@ -133,12 +141,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     paddingTop: 60,
     paddingBottom: 20,
     paddingHorizontal: 24,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    paddingRight: 10,
+    paddingVertical: 4,
+    marginRight: 6,
+  },
+  backIconImage: {
+    width: 24,
+    height: 24,
   },
   headerText: {
     fontSize: 20,
@@ -236,7 +255,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   nextButton: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     marginHorizontal: 24,
     marginBottom: 30,
     borderRadius: 10,

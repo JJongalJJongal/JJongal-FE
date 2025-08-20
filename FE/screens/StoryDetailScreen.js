@@ -8,6 +8,7 @@ import {
   Dimensions,
   ScrollView,
   Image,
+  StatusBar,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -91,15 +92,10 @@ export default function StoryDetailScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       {/* 제목 바 */}
       <View style={styles.titleBar}>
-        <TouchableOpacity style={styles.backButton}>
-          <Image 
-            source={require('../assets/temp/icon_back.jpg')} 
-            style={styles.backIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+        {/* 뒤로가기 아이콘 제거 */}
         <Text style={styles.titleText}>동화책</Text>
         <TouchableOpacity style={styles.homeButton} onPress={handleGoHome}>
           <Image 
@@ -115,8 +111,15 @@ export default function StoryDetailScreen({ navigation, route }) {
         {/* 삽화 영역 */}
         <View style={styles.illustrationContainer}>
           <View style={styles.illustrationFrame}>
-            <Text style={styles.illustrationText}>삽화 영역</Text>
-            <Text style={styles.illustrationSubtext}>페이지 {currentPage + 1}</Text>
+            <Image
+              source={
+                currentPage === 0 ? require('../assets/temp/story2.png') :
+                currentPage === 1 ? require('../assets/temp/story3.png') :
+                require('../assets/temp/story4.png')
+              }
+              style={styles.illustrationImage}
+              resizeMode="cover"
+            />
           </View>
         </View>
 
@@ -204,8 +207,7 @@ export default function StoryDetailScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-      {/* 제스처 네비게이션 바 */}
-      <View style={styles.gestureBar} />
+      
     </View>
   );
 }
@@ -213,12 +215,12 @@ export default function StoryDetailScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFED84',
+    backgroundColor: '#fff',
   },
   
   // 제목 바 스타일
   titleBar: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -227,14 +229,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   
-  backButton: {
-    padding: 10,
-  },
-  
-  backIcon: {
-    width: 24,
-    height: 24,
-  },
+  // 삭제: backButton, backIcon 사용 안 함
   
   titleText: {
     fontSize: 18,
@@ -247,14 +242,14 @@ const styles = StyleSheet.create({
   },
   
   homeIcon: {
-    width: 24,
-    height: 24,
+    width: 36,
+    height: 36,
   },
   
   // 메인 콘텐츠 영역 스타일
   mainContent: {
     flex: 1,
-    backgroundColor: '#FFED84',
+    backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
@@ -266,33 +261,25 @@ const styles = StyleSheet.create({
   },
   
   illustrationFrame: {
-    width: width * 0.8,
-    height: height * 0.3,
+    width: width * 0.9,
+    height: height * 0.4,
     backgroundColor: '#fff',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#FFD700',
+    borderColor: '#fff',
+    overflow: 'hidden',
   },
   
-  illustrationText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  
-  illustrationSubtext: {
-    fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
+  illustrationImage: {
+    width: '100%',
+    height: '100%',
   },
   
   // 텍스트 영역 스타일
   textContainer: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#fff',
     borderRadius: 20,
     padding: 20,
     borderWidth: 2,
@@ -351,7 +338,7 @@ const styles = StyleSheet.create({
   storyText: {
     fontSize: 16,
     color: '#000',
-    lineHeight: 24,
+    lineHeight: 20,
     marginBottom: 8,
   },
   
@@ -361,30 +348,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 30,
-    paddingVertical: 20,
-    backgroundColor: '#FFED84',
+    paddingVertical: 10,
+    backgroundColor: '#fff',
     marginTop: 10,
   },
   
   navButton: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#FFD700',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#FFA500',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    backgroundColor: 'transparent',
   },
   
   navButtonDisabled: {
-    backgroundColor: '#E0E0E0',
-    borderColor: '#C0C0C0',
+    opacity: 0.4,
   },
   
   navIcon: {
-    width: 20, // Adjust as needed for icon size
-    height: 20, // Adjust as needed for icon size
+    width: 36,
+    height: 36,
   },
   
   pageIndicator: {
