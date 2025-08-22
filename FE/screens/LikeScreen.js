@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function LikeScreen() {
@@ -102,14 +102,22 @@ export default function LikeScreen() {
             onPress={prevPage}
             disabled={currentPage === 0}
           >
-            <Text style={styles.paginationArrow}>◀</Text>
+            <Image 
+              source={require('../assets/temp/icon_left.jpg')} 
+              style={styles.paginationIcon}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.paginationButton, currentPage === interests.length - 1 && styles.paginationButtonDisabled]}
             onPress={nextPage}
             disabled={currentPage === interests.length - 1}
           >
-            <Text style={styles.paginationArrow}>▶</Text>
+            <Image 
+              source={require('../assets/temp/icon_right.jpg')} 
+              style={styles.paginationIcon}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
 
@@ -180,15 +188,15 @@ const styles = StyleSheet.create({
     height: 60,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
   },
   interestButtonSelected: {
-    backgroundColor: '#FFF9C4',
-    borderColor: '#FFF9C4',
+    backgroundColor: '#FFF8D1',
+    borderColor: '#FFED84',
   },
   interestButtonText: {
     fontSize: 16,
@@ -205,11 +213,10 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   paginationButton: {
-    width: 40,
-    height: 40,
-    borderWidth: 2,
-    borderColor: '#FFED84',
-    borderRadius: 20,
+    width: 70,
+    height: 70,
+    borderWidth: 0,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -218,10 +225,9 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     opacity: 0.5,
   },
-  paginationArrow: {
-    fontSize: 16,
-    color: '#FFED84',
-    fontWeight: 'bold',
+  paginationIcon: {
+    width: 35,
+    height: 35,
   },
   customInputContainer: {
     marginBottom: 30,
@@ -231,7 +237,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    borderRadius: 8,
+    borderRadius: 10,
     paddingHorizontal: 15,
     backgroundColor: '#fff',
     fontSize: 16,
@@ -240,7 +246,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF9C4',
     marginHorizontal: 24,
     marginBottom: 30,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingVertical: 15,
     alignItems: 'center',
   },
