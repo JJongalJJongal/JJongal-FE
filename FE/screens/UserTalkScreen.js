@@ -13,20 +13,15 @@ import {
 const { width, height } = Dimensions.get('window');
 
 export default function UserTalkScreen({ navigation, route }) {
-  // 사용자 이름 (나중에 백엔드 연동 예정)
   const [userName, setUserName] = useState('상아');
-
-  // 음성 수집 모드 상태
   const [isListening, setIsListening] = useState(false);
 
-  // 배경 이미지 배열 (AITalkScreen과 동일하게 사용)
   const backgroundImages = [
-    require('../assets/temp/bg1.jpg'),
-    require('../assets/temp/bg2.jpg'),
-    require('../assets/temp/bg3.jpg'),
+    require('../assets/temp/bg1.png'),
+    require('../assets/temp/bg2.png'),
+    require('../assets/temp/bg3.png'),
   ];
 
-  // AITalkScreen에서 전달된 배경 인덱스를 사용, 없으면 랜덤
   const [currentBackground, setCurrentBackground] = useState(() => {
     if (route?.params?.background !== undefined) {
       return route.params.background;
@@ -35,53 +30,33 @@ export default function UserTalkScreen({ navigation, route }) {
     return randomIndex;
   });
 
-  const handleMicrophonePress = () => {
-    setIsListening((prev) => !prev);
-  };
+  const handleMicrophonePress = () => setIsListening((prev) => !prev);
 
   const handleCompleteAnswer = () => {
-    if (isListening) {
-      setIsListening(false);
-    }
-    navigation.navigate('AITalk', {
-      background: currentBackground,
-    });
+    if (isListening) setIsListening(false);
+    navigation.navigate('AITalk', { background: currentBackground });
   };
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
-
-  const handleGoHome = () => {
-    navigation.navigate('Main');
-  };
+  const handleGoHome = () => navigation.navigate('Main');
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFED84" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
 
       {/* 상단 헤더 */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <Image
-            source={require('../assets/temp/icon_back.jpg')}
-            style={styles.backIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
         <Text style={styles.headerText}>동화책 만들기</Text>
         <TouchableOpacity style={styles.homeButton} onPress={handleGoHome}>
           <Image
-            source={require('../assets/temp/icon_home.jpg')}
+            source={require('../assets/temp/icon_home3.png')}
             style={styles.homeIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
       </View>
 
-      {/* 메인 콘텐츠 영역 */}
+      {/* 메인 콘텐츠 (이미지 영역) */}
       <View style={styles.mainContent}>
-        {/* 배경 이미지 */}
         <Image
           source={backgroundImages[currentBackground]}
           style={styles.backgroundImage}
@@ -108,7 +83,11 @@ export default function UserTalkScreen({ navigation, route }) {
           onPress={handleMicrophonePress}
         >
           <Image
-            source={require('../assets/temp/icon_mike.jpg')}
+            source={
+              isListening
+                ? require('../assets/temp/icon_mike2.png')
+                : require('../assets/temp/icon_mike1.png')
+            }
             style={styles.microphoneIcon}
             resizeMode="contain"
           />
@@ -118,9 +97,6 @@ export default function UserTalkScreen({ navigation, route }) {
         <TouchableOpacity style={styles.completeButton} onPress={handleCompleteAnswer}>
           <Text style={styles.completeButtonText}>대답완료</Text>
         </TouchableOpacity>
-
-        {/* 제스처 네비게이션 바 */}
-        <View style={styles.gestureBar} />
       </View>
     </View>
   );
@@ -130,39 +106,43 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
 
   header: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 40, // AITalkScreen과 동일
     paddingBottom: 20,
     zIndex: 2,
   },
-  backButton: { padding: 8 },
-  backIcon: { width: 24, height: 24 },
   headerText: { fontSize: 20, fontWeight: 'bold', color: '#000' },
   homeButton: { padding: 8 },
-  homeIcon: { width: 24, height: 24 },
+  homeIcon: { width: 36, height: 36 },
 
-  mainContent: { flex: 1, backgroundColor: '#fff', position: 'relative' },
+  mainContent: {
+    flex: 1, // 🔥 세로 비율 동일하게 맞춤
+    position: 'relative',
+  },
   backgroundImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
-    bottom: 0,
   },
 
-  bottomSection: { backgroundColor: '#fff', paddingHorizontal: 24, paddingBottom: 30 },
+  bottomSection: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 24,
+    paddingBottom: 30,
+  },
   nameLabel: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#FFF1A1', // AITalkScreen과 동일
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
     alignSelf: 'flex-start',
+    marginTop: 8,
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
@@ -184,11 +164,15 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#FFD700',
   },
-  microphoneButtonListening: { backgroundColor: '#FFED84', borderColor: '#FFA500' },
-  microphoneIcon: { width: 40, height: 40 },
+  microphoneButtonListening: { backgroundColor: '#FFFBE5', borderColor: '#FFA500' },
+  microphoneIcon: { width: 48, height: 48 },
 
-  completeButton: { backgroundColor: '#FFED84', borderRadius: 10, paddingVertical: 15, alignItems: 'center', marginBottom: 20 },
+  completeButton: {
+    backgroundColor: '#FFF1A1',
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   completeButtonText: { fontSize: 18, fontWeight: 'bold', color: '#000' },
-
-  gestureBar: { height: 4, backgroundColor: '#000', borderRadius: 2, alignSelf: 'center', width: 40 },
-}); 
+});

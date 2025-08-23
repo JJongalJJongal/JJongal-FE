@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert, Image, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function LikeScreen() {
@@ -61,13 +61,10 @@ export default function LikeScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       {/* 헤더 */}
       <View style={styles.header}>
         <Text style={styles.headerText}>관심사를 선택해주세요</Text>
-        {/* 캐릭터 아이콘 위치 */}
-        <View style={styles.characterContainer}>
-          <Text style={styles.character}>😊</Text>
-        </View>
       </View>
 
       {/* 구분선 */}
@@ -148,7 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 24,
@@ -159,14 +156,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
-  },
-  characterContainer: {
-    position: 'absolute',
-    right: 20,
-    top: 60,
-  },
-  character: {
-    fontSize: 40,
   },
   separator: {
     height: 1,
@@ -196,7 +185,7 @@ const styles = StyleSheet.create({
   },
   interestButtonSelected: {
     backgroundColor: '#FFF8D1',
-    borderColor: '#FFED84',
+    borderColor: '#FFF1A1',
   },
   interestButtonText: {
     fontSize: 16,
@@ -243,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   completeButton: {
-    backgroundColor: '#FFF9C4',
+    backgroundColor: '#FFF1A1',
     marginHorizontal: 24,
     marginBottom: 30,
     borderRadius: 10,

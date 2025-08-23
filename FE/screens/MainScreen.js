@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, ImageBackground, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function MainScreen() {
@@ -27,43 +27,15 @@ export default function MainScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       {/* 메인 섹션 */}
       <View style={styles.mainSection}>
-        <Image 
-          source={require('../assets/temp/logo2.jpg')} 
-          style={styles.appLogo}
-          resizeMode="contain"
+        <View style={styles.topGap} />
+        <ImageBackground 
+          source={require('../assets/temp/s_home.png')} 
+          style={styles.homeBackground}
+          resizeMode="cover"
         />
-        
-        <View style={styles.titleContainer}>
-          <Text style={styles.mainTitle}>상상력을 펼쳐보세요!</Text>
-          <Text style={styles.subtitle}>부기와 대화하며</Text>
-          <Text style={styles.subtitle}>나만의 동화책을 만들어보세요</Text>
-        </View>
-
-        {/* 병아리 캐릭터들 */}
-        <View style={styles.charactersContainer}>
-          <View style={styles.characterRow}>
-            <View style={styles.chickContainer}>
-              <Image 
-                source={require('../assets/temp/main1.jpg')} 
-                style={styles.chickImage}
-                resizeMode="contain"
-              />
-            </View>
-            
-            <View style={styles.chickContainer}>
-              <Image 
-                source={require('../assets/temp/main2.jpg')} 
-                style={styles.chickImage}
-                resizeMode="contain"
-              />
-              <View style={styles.speechBubble}>
-                <Text style={styles.speechText}>오늘은 또 어떤 이야기를 만들어볼까?</Text>
-              </View>
-            </View>
-          </View>
-        </View>
 
         {/* 동화책 만들기 버튼 */}
         <TouchableOpacity style={styles.createButton} onPress={handleCreateStory}>
@@ -83,7 +55,11 @@ export default function MainScreen() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storyScroll}>
           <View style={styles.storyCard}>
             <View style={styles.storyImage}>
-              <Text style={styles.placeholderText}>토끼 동화</Text>
+              <Image
+                source={require('../assets/temp/s_example1.png')}
+                style={styles.storyThumbnailImage}
+                resizeMode="cover"
+              />
             </View>
             <View style={styles.storyInfo}>
               <Text style={styles.storyTitle}>토끼들의 모험</Text>
@@ -93,7 +69,11 @@ export default function MainScreen() {
           
           <View style={styles.storyCard}>
             <View style={styles.storyImage}>
-              <Text style={styles.placeholderText}>공룡 동화</Text>
+              <Image
+                source={require('../assets/temp/s_example2.png')}
+                style={styles.storyThumbnailImage}
+                resizeMode="cover"
+              />
             </View>
             <View style={styles.storyInfo}>
               <Text style={styles.storyTitle}>공룡 친구들</Text>
@@ -152,11 +132,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   mainSection: {
-    backgroundColor: '#FFED84',
-    paddingTop: 60,
+    backgroundColor: '#fff',
+    paddingTop: 10,
     paddingBottom: 30,
-    paddingHorizontal: 24,
-    alignItems: 'center',
+    paddingHorizontal: 0,
+    alignItems: 'stretch',
+    width: '100%',
+    position: 'relative',
+  },
+  topGap: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 10,
+    backgroundColor: '#FFF1A1',
   },
   appName: {
     fontSize: 16,
@@ -168,6 +158,17 @@ const styles = StyleSheet.create({
     width: 100,
     height: 50,
     alignSelf: 'flex-start',
+    marginBottom: 20,
+  },
+  homeBackground: {
+    width: '100%',
+    height: 360,
+    marginBottom: 20,
+    alignSelf: 'stretch',
+  },
+  homeImage: {
+    width: '100%',
+    height: 240,
     marginBottom: 20,
   },
   titleContainer: {
@@ -224,11 +225,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   createButton: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     paddingHorizontal: 60,
     paddingVertical: 20,
     borderRadius: 15,
     borderWidth: 0,
+    marginHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -242,6 +246,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
+    textAlign: 'center',
   },
   storySection: {
     flex: 1,
@@ -276,10 +281,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   storyImage: {
+    width: '100%',
     height: 120,
     backgroundColor: '#F0F0F0',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  storyThumbnailImage: {
+    width: '100%',
+    height: '100%',
   },
   placeholderText: {
     fontSize: 14,

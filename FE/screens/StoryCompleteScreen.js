@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   StatusBar,
+  Image,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -30,48 +31,17 @@ export default function StoryCompleteScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFED84" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       
       {/* 상단 커스텀 상태바 제거됨 */}
  
       {/* 메인 콘텐츠 영역 (노란색 배경) */}
       <View style={styles.mainContent}>
-        {/* 병아리 캐릭터들 */}
-        <View style={styles.charactersContainer}>
-          {/* 왼쪽 작은 병아리 */}
-          <View style={styles.smallChick}>
-            <View style={styles.chickBody}>
-              <Text style={styles.chickEmoji}>🐤</Text>
-            </View>
-            <View style={styles.cheek}></View>
-            <View style={styles.overalls}></View>
-            <View style={styles.raisedArm}></View>
-          </View>
-          
-          {/* 오른쪽 큰 병아리 */}
-          <View style={styles.bigChick}>
-            <View style={styles.chickBody}>
-              <Text style={styles.chickEmoji}>🐤</Text>
-            </View>
-            <View style={styles.glasses}></View>
-            <View style={styles.cheek}></View>
-            <View style={styles.shirt}></View>
-            <View style={styles.pants}></View>
-            <View style={styles.bookStack}>
-              <View style={styles.book1}></View>
-              <View style={styles.book2}></View>
-            </View>
-            <View style={styles.openBook}></View>
-          </View>
-        </View>
-        
-        {/* 완성 메시지 */}
-        <View style={styles.messageContainer}>
-          <Text style={styles.messageText1}>동화책이 완성되었어요!</Text>
-          <Text style={styles.messageText2}>
-            {aiName}와 만든 책을 보러 가볼까요?
-          </Text>
-        </View>
+        <Image 
+          source={require('../assets/temp/s_complete.png')}
+          style={styles.completeImage}
+          resizeMode="cover"
+        />
       </View>
 
       {/* 곡선 구분선 */}
@@ -91,8 +61,7 @@ export default function StoryCompleteScreen({ navigation, route }) {
           <Text style={styles.mainButtonText}>메인화면</Text>
         </TouchableOpacity>
         
-        {/* 제스처 네비게이션 바 */}
-        <View style={styles.gestureBar} />
+        
       </View>
     </View>
   );
@@ -110,7 +79,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFED84',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: 0,
+  },
+  completeImage: {
+    width: '100%',
+    height: '100%',
+    marginBottom: 10,
   },
   
   charactersContainer: {

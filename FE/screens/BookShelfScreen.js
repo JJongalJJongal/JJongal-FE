@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function BookShelfScreen() {
@@ -83,15 +83,16 @@ export default function BookShelfScreen() {
   if (isEmpty) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
         {/* 헤더 */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Text style={styles.backIcon}>←</Text>
+            <Image source={require('../assets/temp/icon_back.png')} style={styles.backIconImage} resizeMode="contain" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>나의 책장</Text>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
             <Image
-              source={require('../assets/temp/icon_trash.jpg')}
+              source={require('../assets/temp/icon_trash.png')}
               style={styles.deleteIconImage}
               resizeMode="contain"
             />
@@ -157,15 +158,16 @@ export default function BookShelfScreen() {
   // 동화책 목록 화면
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backIcon}>←</Text>
+          <Image source={require('../assets/temp/icon_back.png')} style={styles.backIconImage} resizeMode="contain" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>나의 책장</Text>
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
           <Image 
-            source={require('../assets/temp/icon_trash.jpg')} 
+            source={require('../assets/temp/icon_trash.png')} 
             style={styles.deleteIconImage}
             resizeMode="contain"
           />
@@ -174,10 +176,20 @@ export default function BookShelfScreen() {
 
       {/* 동화책 목록 */}
       <ScrollView style={styles.storyList} showsVerticalScrollIndicator={false}>
-        {stories.map((story) => (
+        {stories.map((story, index) => (
           <TouchableOpacity key={story.id} style={styles.storyCard} onPress={() => handleOpenStory(story)} activeOpacity={0.8}>
             <View style={styles.storyThumbnail}>
-              <Text style={styles.placeholderText}>{story.thumbnail}</Text>
+              <Image
+                source={
+                  index === 0 ? require('../assets/temp/lumi.png') :
+                  index === 1 ? require('../assets/temp/space.png') :
+                  index === 2 ? require('../assets/temp/magic.png') :
+                  index === 3 ? require('../assets/temp/ocean.png') :
+                  require('../assets/temp/s_example2.png')
+                }
+                style={styles.thumbnailImage}
+                resizeMode="cover"
+              />
             </View>
             
             <View style={styles.storyInfo}>
@@ -186,14 +198,13 @@ export default function BookShelfScreen() {
               <Text style={styles.storyDescription}>{story.description}</Text>
             </View>
             
-            <TouchableOpacity 
-              style={styles.playButton} 
-              onPress={() => handlePlayStory(story.id)}
-            >
-              <View style={styles.playIcon}>
-                <Text style={styles.playTriangle}>▶</Text>
-              </View>
-            </TouchableOpacity>
+            <View style={styles.goButtonContainer}>
+              <Image 
+                source={require('../assets/temp/icon_go.png')} 
+                style={styles.goIcon}
+                resizeMode="contain"
+              />
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -237,11 +248,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 24,
   },
@@ -251,6 +262,10 @@ const styles = StyleSheet.create({
   backIcon: {
     fontSize: 20,
     color: '#000',
+  },
+  backIconImage: {
+    width: 24,
+    height: 24,
   },
   headerTitle: {
     fontSize: 20,
@@ -264,8 +279,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   deleteIconImage: {
-    width: 24,
-    height: 24,
+    width: 36,
+    height: 36,
   },
   emptyContent: {
     flex: 1,
@@ -323,7 +338,7 @@ const styles = StyleSheet.create({
   },
   questionMark: {
     fontSize: 20,
-    color: '#FFED84',
+    color: '#FFF1A1',
     marginHorizontal: 2,
   },
   emptyText: {
@@ -333,7 +348,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   createButton: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     paddingHorizontal: 30,
     paddingVertical: 15,
     borderRadius: 25,
@@ -393,21 +408,21 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: 16,
   },
-  playButton: {
-    marginLeft: 15,
+  goIcon: {
+    width: 24,
+    height: 24,
   },
-  playIcon: {
+  goButtonContainer: {
     width: 40,
     height: 40,
-    backgroundColor: '#F0F0F0',
     borderRadius: 20,
+    borderWidth: 4,
+    borderColor: '#FFF1A1',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  playTriangle: {
-    fontSize: 16,
-    color: '#FFED84',
-    marginLeft: 2,
+    marginLeft: 15,
+    alignSelf: 'flex-start',
+    marginTop: 8,
   },
   navigationBar: {
     flexDirection: 'row',
@@ -437,5 +452,10 @@ const styles = StyleSheet.create({
   activeNavText: {
     color: '#333',
     fontWeight: 'bold',
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
   },
 }); 
