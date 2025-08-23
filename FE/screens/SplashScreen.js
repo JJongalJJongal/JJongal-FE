@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
@@ -12,9 +12,12 @@ export default function SplashScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>PEEP</Text>
-        <Text style={styles.title}>PEEP</Text>
+      <View style={styles.logoContainer}>
+        <Image 
+          source={require('../assets/temp/logo3.png')} 
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </View>
     </View>
   );
@@ -23,25 +26,18 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFED84', // 지정하신 노란색 배경
+    backgroundColor: '#FFED84', // 배경색을 #FFED84로 변경
     justifyContent: 'center',
     alignItems: 'center',
   },
-  textContainer: {
-    alignItems: 'center',
+  logoContainer: {
+    width: 200,
+    height: 200,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 52,
-    fontWeight: '900',
-    color: 'white',
-    fontFamily: 'System',
-    textShadowColor: 'rgba(0, 0, 0, 0.15)',
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 6,
-    letterSpacing: 3,
-    marginVertical: 8,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
 }); 

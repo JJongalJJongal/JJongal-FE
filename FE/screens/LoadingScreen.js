@@ -68,7 +68,7 @@ export default function LoadingScreen({ navigation, route }) {
   
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       
       {/* 상단 로딩바 */}
       <View style={styles.progressBarContainer}>
@@ -102,8 +102,7 @@ export default function LoadingScreen({ navigation, route }) {
         <Text style={styles.loadingText}>쫑이가 그림을 그리는 중...</Text>
       </View>
       
-      {/* 하단 홈 인디케이터 */}
-      <View style={styles.homeIndicator} />
+      
     </View>
   );
 }

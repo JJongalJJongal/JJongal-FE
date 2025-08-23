@@ -53,7 +53,7 @@ export default function StoryLoadingScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFED84" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
       
       {/* 상단 헤더 */}
       <View style={styles.header}>
@@ -114,8 +114,7 @@ export default function StoryLoadingScreen({ navigation, route }) {
         </Text>
       </View>
 
-      {/* 하단 제스처 바 */}
-      <View style={styles.gestureBar} />
+      
     </View>
   );
 }
@@ -128,13 +127,13 @@ const styles = StyleSheet.create({
   
   // 상단 헤더 스타일
   header: {
-    backgroundColor: '#FFED84',
+    backgroundColor: '#FFF1A1',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 15,
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 20,
   },
   
   timeContainer: {
@@ -231,7 +230,7 @@ const styles = StyleSheet.create({
   
   progressFill: {
     height: '100%',
-    backgroundColor: '#FFD700',
+    backgroundColor: '#FFF1A1',
     borderRadius: 4,
     transition: 'width 0.1s ease',
   },
