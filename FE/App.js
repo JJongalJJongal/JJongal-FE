@@ -11,6 +11,7 @@ import LikeScreen from './screens/LikeScreen';
 import MainScreen from './screens/MainScreen';
 import BookShelfScreen from './screens/BookShelfScreen';
 import SettingScreen from './screens/SettingScreen';
+import AITalkScreen from './screens/AITalkScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -29,6 +30,7 @@ export default function App() {
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="BookShelf" component={BookShelfScreen} />
         <Stack.Screen name="Setting" component={SettingScreen} />
+        <Stack.Screen name="AITalk" component={AITalkScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

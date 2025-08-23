@@ -31,10 +31,9 @@ export default function LoginScreen({ navigation }) {
   
       if (result.success) {
         console.log('성공! 서버 인증 코드:', result.serverAuthCode); // <--- 이 로그를 추가해서 코드를 확인
-        console.log('4. 로그인 성공! LoadingPage로 이동합니다.');
-        navigation.navigate('LoadingPage', { 
-          code: result.serverAuthCode 
-        });
+        console.log('4. 로그인 성공! Main 페이지로 이동합니다.');
+        // LoadingPage 대신 바로 Main 페이지로 이동
+        navigation.navigate('Main');
       } else {
         console.log('4. 로그인 실패 (result.success가 false). 에러:', result.error); // <--- 로그 추가
         Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
