@@ -46,6 +46,10 @@ google-services.json
 # node modules
 node_modules/
 
+# Package files
+package.json
+package-lock.json
+
 # Android 빌드 파일
 android/app/build/
 android/build/
