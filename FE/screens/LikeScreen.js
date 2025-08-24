@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function LikeScreen() {
   const navigation = useNavigation();
 
-  const [selectedInterests, setSelectedInterests] = useState(['공룡']);
+  const [selectedInterests, setSelectedInterests] = useState([]);
   const [customInterest, setCustomInterest] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 

@@ -9,37 +9,37 @@ export default function BookShelfScreen() {
   const [stories, setStories] = useState([
     {
       id: 1,
-      title: '루미와 친구 이야기',
-      date: '2025.07.03',
-      description: '루미는 아라의 첫 친구가 되었다. 둘은 금방 친해져 함께 다닌다. 루미는 아라에게 학교를 소개한...',
+      title: '시금치 요정 이야기',
+      date: '2025.08.23',
+      description: '오늘 점심, 정우는 시금치가 정말 먹기 싫었어요. 초록색 나물은 왠지 맛이 없을 것만 같았죠.',
       thumbnail: 'placeholder1'
     },
     {
       id: 2,
       title: '우주 탐험대',
       date: '2025.07.02',
-      description: '우주선을 타고 별들을 탐험하는 모험 이야기. 새로운 행성을 발견하고 친구들을 만나게 된다...',
+      description: '우주선을 타고 별들이 모험을 가고 있어요. 새로운 행성을 발견하고 친구들을 만나게 되었어요.',
       thumbnail: 'placeholder2'
     },
     {
       id: 3,
       title: '마법학교 첫날',
       date: '2025.07.01',
-      description: '마법학교에 입학한 주인공의 첫날 이야기. 신기한 마법들과 새로운 친구들을 만나게 된다...',
+      description: '정우는 마법학교에 입학했어요. 신기한 마법들과 새로운 친구들을 만나게 되었어요.',
       thumbnail: 'placeholder3'
     },
     {
       id: 4,
       title: '바다 속 모험',
       date: '2025.06.30',
-      description: '깊은 바다 속으로 들어가 물고기들과 친구가 되는 이야기. 아름다운 산호초와 신비로운 바다 생물들을 만난다...',
+      description: '깊은 바다속에는 아름다은 산호초와 바다 생물들이 살고 있었어요image.png.',
       thumbnail: 'placeholder4'
     },
     {
       id: 5,
       title: '공룡 친구들',
       date: '2025.06.29',
-      description: '공룡 시대로 시간 여행을 가서 공룡들과 친구가 되는 이야기. 티렉스와 브라키오사우루스와 함께 모험을 떠난다...',
+      description: '공룡 시대로 여행을 떠나볼까요? 공룡 시대에는 티렉스와 브라키오사우루스와 함께 살고 있었어요.',
       thumbnail: 'placeholder5'
     }
   ]);
@@ -181,7 +181,7 @@ export default function BookShelfScreen() {
             <View style={styles.storyThumbnail}>
               <Image
                 source={
-                  index === 0 ? require('../assets/temp/lumi.png') :
+                  index === 0 ? require('../assets/temp/ex1.png') :
                   index === 1 ? require('../assets/temp/space.png') :
                   index === 2 ? require('../assets/temp/magic.png') :
                   index === 3 ? require('../assets/temp/ocean.png') :

@@ -31,9 +31,10 @@ export default function LoginScreen({ navigation }) {
   
       if (result.success) {
         console.log('성공! 서버 인증 코드:', result.serverAuthCode); // <--- 이 로그를 추가해서 코드를 확인
-        console.log('4. 로그인 성공! Main 페이지로 이동합니다.');
-        // LoadingPage 대신 바로 Main 페이지로 이동
-        navigation.navigate('Main');
+        console.log('4. 로그인 성공! LoadingPage로 이동합니다.');
+        navigation.navigate('UserInfo', { 
+          code: result.serverAuthCode 
+        });
       } else {
         console.log('4. 로그인 실패 (result.success가 false). 에러:', result.error); // <--- 로그 추가
         Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
@@ -142,7 +143,11 @@ export default function LoginScreen({ navigation }) {
       {/* 로그인 버튼 */}
       <TouchableOpacity
         style={styles.loginButton}
-        onPress={() => navigation.navigate('UserInfo')}
+        onPress={() => {
+          // TODO: 실제 로그인 로직 구현 필요
+          // 현재는 임의로 Main 화면으로 이동 (테스트용)
+          navigation.navigate('Main');
+        }}
       >
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
@@ -156,7 +161,7 @@ export default function LoginScreen({ navigation }) {
         
         <View style={styles.snsButtonContainer}>
           
-          <TouchableOpacity style={styles.snsButton} onPress={handleKakaoLogin}>
+          <TouchableOpacity style={styles.snsButton} onPress={() => Alert.alert('카카오 로그인', '준비 중입니다.')}>
             <Image 
               source={require('../assets/temp/login_kakao.png')} 
               style={styles.snsIcon}
@@ -172,7 +177,7 @@ export default function LoginScreen({ navigation }) {
             />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.snsButton} onPress={handleNaverLogin}>
+          <TouchableOpacity style={styles.snsButton} onPress={() => Alert.alert('네이버 로그인', '준비 중입니다.')}>
             <Image 
               source={require('../assets/temp/login_naver.png')} 
               style={styles.snsIcon}

@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, StatusBar } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Alert, 
+  Image, 
+  StatusBar,
+  ScrollView, // ScrollView 추가
+  KeyboardAvoidingView, // KeyboardAvoidingView 추가
+  Platform // Platform 추가
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function UserInfoScreen() {
@@ -11,8 +23,38 @@ export default function UserInfoScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isPasswordMatch, setIsPasswordMatch] = useState(false);
 
   const isEditMode = route?.params?.mode === 'edit';
+
+  // 비밀번호 형식 검증 함수
+  const validatePassword = (password) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const isValidLength = password.length >= 8 && password.length <= 20;
+    
+    const conditions = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar];
+    const validConditions = conditions.filter(Boolean).length >= 2;
+    
+    return isValidLength && validConditions;
+  };
+
+  // 비밀번호 변경 시 검증
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    setIsPasswordValid(validatePassword(text));
+    setIsPasswordMatch(text === confirmPassword && text !== '');
+  };
+
+  // 비밀번호 확인 변경 시 검증
+  const handleConfirmPasswordChange = (text) => {
+    setConfirmPassword(text);
+    setIsPasswordMatch(text === password && text !== '');
+  };
 
   const handleNext = () => {
     if (!userId) {
@@ -35,8 +77,10 @@ export default function UserInfoScreen() {
       Alert.alert('입력 오류', '아이디를 입력해주세요.');
       return;
     }
+    // 중복 확인 성공으로 처리
+    setIsDuplicateChecked(true);
     // TODO: 실제 중복 확인 API 호출
-    Alert.alert('중복 확인', '중복 확인 기능은 준비 중입니다.');
+    // Alert.alert('중복 확인', '중복 확인 기능은 준비 중입니다.');
   };
 
   return (
@@ -59,78 +103,98 @@ export default function UserInfoScreen() {
         </View>
       </View>
 
-      {/* 콘텐츠 영역 */}
-      <View style={styles.content}>
-        {/* 아이디 입력 섹션 */}
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>아이디</Text>
-          <View style={styles.idContainer}>
-            <TextInput
-              style={styles.idInput}
-              placeholder="아이디"
-              placeholderTextColor="#999"
-              value={userId}
-              onChangeText={setUserId}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity style={styles.duplicateButton} onPress={handleDuplicateCheck}>
-              <Text style={styles.duplicateButtonText}>중복확인</Text>
-            </TouchableOpacity>
+      {/* 콘텐츠 영역 - KeyboardAvoidingView와 ScrollView로 감싸기 */}
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300} // 필요에 따라 조정 가능
+      >
+        <ScrollView contentContainerStyle={styles.content}>
+          {/* 아이디 입력 섹션 */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>아이디</Text>
+            <View style={styles.idContainer}>
+              <TextInput
+                style={styles.idInput}
+                placeholder="아이디"
+                placeholderTextColor="#999"
+                value={userId}
+                onChangeText={setUserId}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity style={styles.duplicateButton} onPress={handleDuplicateCheck}>
+                <Text style={styles.duplicateButtonText}>중복확인</Text>
+              </TouchableOpacity>
+            </View>
+            {isDuplicateChecked ? (
+              <Text style={styles.successText}>사용가능한 아이디입니다.</Text>
+            ) : (
+              <Text style={styles.errorText}>중복된 아이디 입니다.</Text>
+            )}
           </View>
-          <Text style={styles.errorText}>중복된 아이디 입니다.</Text>
-        </View>
 
-        {/* 비밀번호 입력 섹션 */}
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>비밀번호</Text>
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="비밀번호"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity 
-              style={styles.eyeButton}
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Text style={styles.eyeIcon}>👁</Text>
-            </TouchableOpacity>
+          {/* 비밀번호 입력 섹션 */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>비밀번호</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="비밀번호"
+                placeholderTextColor="#999"
+                value={password}
+                onChangeText={handlePasswordChange}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity 
+                style={styles.eyeButton}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Text style={styles.eyeIcon}>👁</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.hintText}>8~20자/영문 대문자, 소문자, 숫자, 특수문자 중 2가지 이상 조합</Text>
+            {password && !isPasswordValid && (
+              <Text style={styles.errorText}>올바른 비밀번호 형식이 아닙니다.</Text>
+            )}
+            {password && isPasswordValid && (
+              <Text style={styles.successText}>올바른 비밀번호 형식입니다.</Text>
+            )}
           </View>
-          <Text style={styles.errorText}>비밀번호가 일치하지 않습니다.</Text>
-        </View>
 
-        {/* 비밀번호 확인 입력 섹션 */}
-        <View style={styles.inputSection}>
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="비밀번호 확인"
-              placeholderTextColor="#999"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showConfirmPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity 
-              style={styles.eyeButton}
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Text style={styles.eyeIcon}>👁</Text>
-            </TouchableOpacity>
+          {/* 비밀번호 확인 입력 섹션 */}
+          <View style={styles.inputSection}>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="비밀번호 확인"
+                placeholderTextColor="#999"
+                value={confirmPassword}
+                onChangeText={handleConfirmPasswordChange}
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity 
+                style={styles.eyeButton}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Text style={styles.eyeIcon}>👁</Text>
+              </TouchableOpacity>
+            </View>
+            {confirmPassword && !isPasswordMatch && (
+              <Text style={styles.errorText}>비밀번호가 일치하지 않습니다.</Text>
+            )}
+            {confirmPassword && isPasswordMatch && (
+              <Text style={styles.successText}>비밀번호가 일치합니다.</Text>
+            )}
           </View>
-          <Text style={styles.hintText}>8~20자/영문 대문자, 소문자, 숫자, 특수문자 중 2가지 이상 조합</Text>
-          <Text style={styles.errorText}>올바른 비밀번호 형식이 아닙니다.</Text>
-        </View>
-      </View>
 
-      {/* 완료/다음 버튼 */}
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextButtonText}>다음</Text>
-      </TouchableOpacity>
+          {/* 완료/다음 버튼을 ScrollView 내부로 이동 */}
+          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+            <Text style={styles.nextButtonText}>다음</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -180,9 +244,10 @@ const styles = StyleSheet.create({
     width: '25%', // 1단계 진행률
   },
   content: {
-    flex: 1,
+    flexGrow: 1, // ScrollView 내 콘텐츠가 공간을 채우도록
     paddingHorizontal: 24,
     paddingTop: 20,
+    paddingBottom: 100, // 하단 패딩 추가
   },
   inputSection: {
     marginBottom: 25,
@@ -249,22 +314,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 5,
   },
+  successText: {
+    color: 'green',
+    fontSize: 12,
+    marginBottom: 5,
+  },
   hintText: {
     color: '#999',
     fontSize: 12,
     marginBottom: 5,
   },
   nextButton: {
+    // 절대 위치 제거, 일반적인 레이아웃으로 변경
     backgroundColor: '#FFF1A1',
-    marginHorizontal: 24,
-    marginBottom: 30,
     borderRadius: 10,
     paddingVertical: 15,
     alignItems: 'center',
+    marginTop: 20,
   },
   nextButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
-}); 
+});
