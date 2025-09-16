@@ -12,16 +12,6 @@ import MainScreen from './screens/MainScreen';
 import BookShelfScreen from './screens/BookShelfScreen';
 import SettingScreen from './screens/SettingScreen';
 import AITalkScreen from './screens/AITalkScreen';
-import StoryLoadingScreen from './screens/StoryLoadingScreen';
-import Talk1 from './screens/Talk1';
-import Talk2 from './screens/Talk2';
-import Talk3 from './screens/Talk3';
-import Talk4 from './screens/Talk4';
-import Talk5 from './screens/Talk5';
-import Talk6 from './screens/Talk6';
-import Talk7 from './screens/Talk7';
-import Talk8 from './screens/Talk8';
-import Talk9 from './screens/Talk9';
 
 
 const Stack = createNativeStackNavigator();
@@ -41,16 +31,6 @@ export default function App() {
         <Stack.Screen name="BookShelf" component={BookShelfScreen} />
         <Stack.Screen name="Setting" component={SettingScreen} />
         <Stack.Screen name="AITalk" component={AITalkScreen} />
-        <Stack.Screen name="StoryLoadingScreen" component={StoryLoadingScreen} />
-        <Stack.Screen name="Talk1" component={Talk1} />
-        <Stack.Screen name="Talk2" component={Talk2} />
-        <Stack.Screen name="Talk3" component={Talk3} />
-        <Stack.Screen name="Talk4" component={Talk4} />
-        <Stack.Screen name="Talk5" component={Talk5} />
-        <Stack.Screen name="Talk6" component={Talk6} />
-        <Stack.Screen name="Talk7" component={Talk7} />
-        <Stack.Screen name="Talk8" component={Talk8} />
-        <Stack.Screen name="Talk9" component={Talk9} />
       </Stack.Navigator>
     </NavigationContainer>
   );
