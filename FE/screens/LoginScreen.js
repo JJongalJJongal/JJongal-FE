@@ -10,6 +10,7 @@ import {
   Image
 } from 'react-native';
 import { configureGoogleSignIn, signInWithGoogle } from '../login/googleSignIn';
+import { API_BASE_URL } from '@env'; // --- [추가] .env 파일에서 API URL 가져오기
 
 export default function LoginScreen({ navigation }) {
   const [userId, setUserId] = useState('');
@@ -21,27 +22,64 @@ export default function LoginScreen({ navigation }) {
     configureGoogleSignIn();
   }, []);
 
+  // --- [수정] handleGoogleLogin 함수 전체 수정 ---
   const handleGoogleLogin = async () => {
-    console.log('1. 구글 로그인 버튼 클릭됨'); // <--- 로그 추가
+    if (isSigningIn) return; // 중복 클릭 방지
+
     setIsSigningIn(true);
     try {
-      console.log('2. signInWithGoogle 함수 호출 시작'); // <--- 로그 추가
-      const result = await signInWithGoogle();
-      console.log('3. signInWithGoogle 함수 결과 받음:', result); // <--- 로그 추가
+      // 1. 구글 로그인 시도
+      const googleResult = await signInWithGoogle();
   
-      if (result.success) {
-        console.log('성공! 서버 인증 코드:', result.serverAuthCode); // <--- 이 로그를 추가해서 코드를 확인
-        console.log('4. 로그인 성공! LoadingPage로 이동합니다.');
+      if (!googleResult.success) {
+        console.log('Google Sign-In was cancelled or failed:', googleResult.error);
+        // 사용자가 로그인을 취소한 경우, 별도 알림 없이 조용히 종료할 수 있습니다.
+        if (googleResult.error.code !== '-5') { // '-5' is the cancellation code on iOS
+            Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
+        }
+        return;
+      }
+      
+      console.log('Google 로그인 성공! Server Auth Code:', googleResult.serverAuthCode);
+      
+      // 2. 백엔드 서버에 인증 코드 전송
+      //    (백엔드에서는 이 코드를 사용해 구글로부터 access/refresh 토큰 및 사용자 정보를 받아옵니다)
+      const response = await fetch(`${API_BASE_URL}/api/auth/google`, { // <-- 백엔드 API 엔드포인트
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: googleResult.serverAuthCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // 백엔드에서 에러를 보낸 경우 (e.g., 이미 가입된 이메일 등)
+        throw new Error(data.message || '서버 통신에 실패했습니다.');
+      }
+
+      // 3. 백엔드 응답에 따른 화면 이동
+      if (data.isNewUser) {
+        // 신규 사용자인 경우, 추가 정보 입력 화면으로 이동
+        // DB에 저장된 email과 이름을 함께 전달합니다.
+        console.log('신규 사용자입니다. UserInfo 화면으로 이동합니다.');
         navigation.navigate('UserInfo', { 
-          code: result.serverAuthCode 
+          email: data.email, 
+          name: data.name 
         });
       } else {
-        console.log('4. 로그인 실패 (result.success가 false). 에러:', result.error); // <--- 로그 추가
-        Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
+        // 기존 사용자인 경우, 메인 화면으로 이동
+        // TODO: 서버에서 받은 JWT 같은 사용자 토큰을 AsyncStorage에 저장해야 합니다.
+        console.log('기존 사용자입니다. Main 화면으로 이동합니다.');
+        navigation.navigate('Main');
       }
+
     } catch (error) {
-      console.error('5. handleGoogleLogin에서 예외 발생:', error); // <--- 로그 추가
-      Alert.alert('Google 로그인 실패', '로그인 중 오류가 발생했습니다.');
+      console.error('handleGoogleLogin에서 예외 발생:', error);
+      Alert.alert('로그인 실패', error.message || '로그인 중 오류가 발생했습니다.');
     } finally {
       setIsSigningIn(false);
     }
@@ -301,4 +339,14 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
+  linkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  linkText: {
+    color: '#555',
+    marginHorizontal: 15,
+  },
 }); 
+

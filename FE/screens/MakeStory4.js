@@ -1,5 +1,5 @@
 // AITalkScreen.js
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,48 +9,176 @@ import {
   StatusBar,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
+import RNFS from 'react-native-fs';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
 const { width, height } = Dimensions.get('window');
 
 export default function AITalkScreen({ navigation, route }) {
+  // ====== 상태 ======
+  // 서버에서 받아온 메시지 목록 [{ text: string, audio?: { object:"file", url?:string, base64?:string, expiry_time?:string } }]
+  const [aiMessages, setAiMessages] = useState([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  
-  const aiMessages = [
-    '그랬구나. \n먹기 싫었던 시금치 이야기라, 아주 좋아! \n만약 정우가 남긴 그 시금치에 \n깜짝 놀랄 비밀이 숨어있었다면 어땠을까?',
-    '어떤 비밀이었을까?'
-  ];
-  
-  const [aiMessage, setAiMessage] = useState(aiMessages[0]);
+  const [aiMessage, setAiMessage] = useState('');
   const [aiImage, setAiImage] = useState('library');
   const [aiName, setAiName] = useState('쫑이');
   const [isMessageComplete, setIsMessageComplete] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // 재생기 & 임시 파일 경로
+  const playerRef = useRef(new AudioRecorderPlayer());
+  const tempPathRef = useRef(null);
+
+  // 배경 이미지 (기존 유지)
   const backgroundImages = [
     require('../assets/temp/bg1.png'),
     require('../assets/temp/bg2.png'),
     require('../assets/temp/bg3.png'),
   ];
-
   const [currentBackground, setCurrentBackground] = useState(() => {
     const randomIndex = Math.floor(Math.random() * backgroundImages.length);
     return randomIndex;
   });
 
-  const togglePlayPause = () => setIsPlaying(!isPlaying);
+  // ====== 오디오 재생/정지 ======
+  const stopAudio = useCallback(async () => {
+    try {
+      await playerRef.current.stopPlayer();
+      playerRef.current.removePlayBackListener();
+    } catch {}
+    setIsPlaying(false);
+    // 임시 파일 삭제
+    if (tempPathRef.current) {
+      RNFS.unlink(tempPathRef.current).catch(() => {});
+      tempPathRef.current = null;
+    }
+  }, []);
 
-  const handleNext = () => {
-    // 바로 Talk5로 이동
-    navigation.navigate('Talk5', {
-      aiName: aiName,
-      aiImage: aiImage,
-      background: currentBackground,
-    });
+  const playAudioForCurrentMessage = useCallback(async () => {
+    const msg = aiMessages[currentMessageIndex];
+    if (!msg) return;
+
+    // 오디오가 없으면 패스 (텍스트만)
+    const audio = msg.audio;
+    if (!audio) return;
+
+    // 일단 기존 재생 중지
+    await stopAudio();
+
+    try {
+      // 1) URL 우선 (서명 URL)
+      if (audio.url && (audio.url.startsWith('http://') || audio.url.startsWith('https://'))) {
+        const result = await playerRef.current.startPlayer(audio.url);
+        setIsPlaying(true);
+        playerRef.current.addPlayBackListener((e) => {
+          if (e.currentPosition >= e.duration) {
+            playerRef.current.removePlayBackListener();
+            setIsPlaying(false);
+          }
+        });
+        return result;
+      }
+
+      // 2) base64가 있는 경우 임시 파일로 저장 후 재생
+      if (audio.base64) {
+        const clean = audio.base64.replace(/^data:audio\/[^;]+;base64,/, '');
+        const p = `${RNFS.DocumentDirectoryPath}/ai_talk_${Date.now()}.mp3`;
+        await RNFS.writeFile(p, clean, 'base64');
+        tempPathRef.current = p;
+
+        const result = await playerRef.current.startPlayer(p);
+        setIsPlaying(true);
+        playerRef.current.addPlayBackListener((e) => {
+          if (e.currentPosition >= e.duration) {
+            playerRef.current.removePlayBackListener();
+            setIsPlaying(false);
+            if (tempPathRef.current) {
+              RNFS.unlink(tempPathRef.current).catch(() => {});
+              tempPathRef.current = null;
+            }
+          }
+        });
+        return result;
+      }
+    } catch (e) {
+      // 재생 실패해도 텍스트는 표시됨
+      // console.warn('Audio play failed', e);
+      setIsPlaying(false);
+    }
+  }, [aiMessages, currentMessageIndex, stopAudio]);
+
+  // ====== 서버 메시지 수신 반영 ======
+  useEffect(() => {
+    // MakeStory3(또는 이전 화면)에서 받아온 최신 서버 메시지들을 params로 전달했다고 가정
+    // route.params.serverMessages 또는 route.params.aiEvents 형태를 지원
+    const fromParams =
+      route?.params?.serverMessages ||
+      route?.params?.aiEvents ||
+      []; // 없으면 빈 배열
+
+    if (!Array.isArray(fromParams) || fromParams.length === 0) {
+      // 아무것도 못 받았으면(개발/오프라인용) 안내
+      setAiMessages([{ text: '서버 응답이 아직 없어요. 방금 한 대화가 끝나면 여기에 나타납니다.' }]);
+      setCurrentMessageIndex(0);
+      setAiMessage('서버 응답이 아직 없어요. 방금 한 대화가 끝나면 여기에 나타납니다.');
+      setIsMessageComplete(true); // 다음 버튼 대신 대답/완성 버튼 노출
+      return;
+    }
+
+    // 정상 수신: 목록 반영
+    setAiMessages(fromParams);
+    setCurrentMessageIndex(0);
+    setAiMessage(fromParams[0]?.text || '');
+    // 메시지가 1개뿐이면 즉시 완료 상태로 전환
+    setIsMessageComplete(fromParams.length <= 1);
+  }, [route?.params]);
+
+  // 현재 인덱스가 바뀌면 텍스트 반영
+  useEffect(() => {
+    const msg = aiMessages[currentMessageIndex];
+    setAiMessage(msg?.text || '');
+    // 인덱스 바뀔 때 자동 재생(원하면 주석 해제)
+    // playAudioForCurrentMessage();
+  }, [currentMessageIndex, aiMessages /*, playAudioForCurrentMessage*/]);
+
+  // 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [stopAudio]);
+
+  // ====== 버튼 핸들러 ======
+  const togglePlayPause = async () => {
+    // 재생 중이면 정지
+    if (isPlaying) {
+      await stopAudio();
+      return;
+    }
+    // 재생 시작
+    await playAudioForCurrentMessage();
+  };
+
+  const handleNext = async () => {
+    // 다음 메시지로
+    const next = currentMessageIndex + 1;
+    if (next < aiMessages.length) {
+      await stopAudio();
+      setCurrentMessageIndex(next);
+      // 남은 게 마지막이면 완료 상태 전환
+      if (next === aiMessages.length - 1) {
+        setIsMessageComplete(true);
+      }
+    } else {
+      // 이미 마지막 → 완료 상태
+      setIsMessageComplete(true);
+    }
   };
 
   const handleAnswer = () => {
-    navigation.navigate('UserTalkScreen', {
+    navigation.navigate('MakeStory3', {
       aiName: aiName,
       aiImage: aiImage,
       background: currentBackground,
@@ -58,7 +186,7 @@ export default function AITalkScreen({ navigation, route }) {
   };
 
   const handleComplete = () => {
-    navigation.navigate('Loading', {
+    navigation.navigate('MakeStory5', {
       aiName: aiName,
       aiImage: aiImage,
       background: currentBackground,
@@ -69,6 +197,7 @@ export default function AITalkScreen({ navigation, route }) {
     console.log('대화 기록 보기');
   };
 
+  // ====== 렌더 ======
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFF1A1" />
@@ -96,13 +225,14 @@ export default function AITalkScreen({ navigation, route }) {
         <View style={styles.controlButtons}>
           <TouchableOpacity style={styles.playButton} onPress={togglePlayPause}>
             <Image
+              // isPlaying 상태에 따라 아이콘을 교체하려면 필요시 분기
               source={require('../assets/temp/icon_pause.jpg')}
               style={styles.playIcon}
               resizeMode="contain"
             />
           </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.stopButton}>
+
+          <TouchableOpacity style={styles.stopButton} onPress={stopAudio}>
             <Image
               source={require('../assets/temp/icon_play.jpg')}
               style={styles.stopIcon}
@@ -127,24 +257,24 @@ export default function AITalkScreen({ navigation, route }) {
           <Text style={styles.nameText}>{aiName}</Text>
           <Text style={styles.dropdownIcon}>▼</Text>
         </View>
-        
+
         {/* AI 메시지 */}
         <View style={styles.messageContainer}>
-          <ScrollView 
+          <ScrollView
             showsVerticalScrollIndicator={true}
             contentContainerStyle={styles.scrollContent}
           >
             <Text style={styles.messageText}>{aiMessage}</Text>
           </ScrollView>
         </View>
-        
+
         {/* 액션 버튼들 */}
         {!isMessageComplete ? (
           <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
             <Text style={styles.nextButtonText}>다음</Text>
           </TouchableOpacity>
         ) : (
-          <View style={styles.actionButtonsContainer}>
+          <View className="actionButtonsContainer" style={styles.actionButtonsContainer}>
             <TouchableOpacity style={styles.answerButton} onPress={handleAnswer}>
               <Text style={styles.answerButtonText}>대답하기</Text>
             </TouchableOpacity>

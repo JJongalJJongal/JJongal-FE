@@ -19,7 +19,7 @@ export default function StoryCompleteScreen({ navigation, route }) {
   // 보러가기 버튼 클릭 시 Talk9로 이동
   const handleViewStory = () => {
     // Talk9로 이동
-    navigation.navigate('Talk9', {
+    navigation.navigate('MakeStory7', {
       aiName: aiName,
     });
   };

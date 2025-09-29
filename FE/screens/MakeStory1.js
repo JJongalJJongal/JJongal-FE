@@ -40,7 +40,7 @@ export default function AITalkScreen({ navigation, route }) {
 
   const handleNext = () => {
     // 바로 Talk2.js로 이동
-    navigation.navigate('Talk2', {
+    navigation.navigate('MakeStory2', {
       aiName: aiName,
       aiImage: aiImage,
       background: currentBackground,
@@ -48,7 +48,7 @@ export default function AITalkScreen({ navigation, route }) {
   };
 
   const handleAnswer = () => {
-    navigation.navigate('Talk2', {
+    navigation.navigate('MakeStory2', {
       aiName: aiName,
       aiImage: aiImage,
       background: currentBackground,

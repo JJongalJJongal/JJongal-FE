@@ -1,5 +1,5 @@
 // UserTalkScreen.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,25 @@ import {
   StatusBar,
   Image,
 } from 'react-native';
+import AudioRecord from 'react-native-audio-record';
+import { Buffer } from 'buffer';
 
 const { width, height } = Dimensions.get('window');
+
+// 오디오 관련 상수
+const SAMPLE_RATE = 16000;
+const ENCODING = 'pcm_s16le';
 
 export default function UserTalkScreen({ navigation, route }) {
   const [userName, setUserName] = useState('정우');
   const [isListening, setIsListening] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
+
+  // 오디오 관련 refs
+  const wsRef = useRef(null);               // WebSocket
+  const chunksRef = useRef([]);             // 녹음된 PCM 청크 모음
+  const jwtRef = useRef(null);              // JWT 캐시
+  const [wsReady, setWsReady] = useState(false);
 
   const backgroundImages = [
     require('../assets/temp/bg1.png'),
@@ -31,15 +43,152 @@ export default function UserTalkScreen({ navigation, route }) {
     return randomIndex;
   });
 
-  const handleMicrophonePress = () => setIsListening((prev) => !prev);
+  // AudioRecord 초기화 useEffect
+  useEffect(() => {
+    (async () => {
+      // JWT 준비 (임시로 null 설정, 실제 구현 시 토큰 가져오기)
+      try {
+        // const tok = await fetchJwtToken();
+        jwtRef.current = 'temp-jwt-token'; // 임시 토큰
+      } catch (e) { 
+        console.log('JWT 토큰 가져오기 실패:', e);
+      }
 
-  const handleCompleteAnswer = () => {
-    if (isListening) setIsListening(false);
-    setIsWaiting(true); // 대기 상태 시작
-    // 2초 대기 후 Talk4로 이동
-    setTimeout(() => {
-      navigation.navigate('Talk4', { background: currentBackground });
-    }, 2000);
+      // AudioRecord 설정 (안드로이드 전용)
+      try {
+        await AudioRecord.init({
+          sampleRate: SAMPLE_RATE,
+          channels: 1,
+          bitsPerSample: 16,
+          audioSource: 6, // VOICE_RECOGNITION
+          wavFile: 'ignore.wav', // 파일 저장 안씀(스트리밍/버퍼용)
+        });
+
+        // data 콜백: base64 → Buffer 로 변환해서 메모리에 쌓기(녹음 중에만 호출됨)
+        AudioRecord.on('data', (base64Chunk) => {
+          if (!isListening) return; // 사용자 상태와 연동
+          const bytes = Buffer.from(base64Chunk, 'base64'); // PCM 16LE
+          chunksRef.current.push(bytes);
+        });
+      } catch (e) {
+        console.log('AudioRecord 초기화 실패:', e);
+      }
+    })();
+
+    return () => {
+      try { 
+        AudioRecord.stop(); 
+      } catch (e) {
+        console.log('AudioRecord 정리 중 에러:', e);
+      }
+      if (wsRef.current && wsRef.current.readyState <= 1) {
+        wsRef.current.close(1000, 'unmount');
+      }
+    };
+  }, []);
+
+  const handleMicrophonePress = async () => {
+    if (isListening) {
+      // 이미 듣는 중 → 녹음 중지 + 상태 끔
+      try { 
+        await AudioRecord.stop(); 
+      } catch (e) {
+        console.log('녹음 중지 실패:', e);
+      }
+      setIsListening(false);
+    } else {
+      // 듣기 시작 → 청크 초기화 후 녹음 시작
+      chunksRef.current = [];
+      setIsWaiting(false);
+      setIsListening(true);
+      try {
+        await AudioRecord.start();
+      } catch (e) {
+        console.log('녹음 시작 실패:', e);
+        setIsListening(false);
+      }
+    }
+  };
+
+  const handleCompleteAnswer = async () => {
+    // 중복 클릭 방지
+    if (isWaiting) return;
+
+    // 녹음 중이면 종료
+    if (isListening) {
+      try { 
+        await AudioRecord.stop(); 
+      } catch (e) {
+        console.log('녹음 중지 실패:', e);
+      }
+      setIsListening(false);
+    }
+
+    // 적재된 PCM 없으면 무시
+    const frames = chunksRef.current;
+    if (!frames || frames.length === 0) {
+      console.log('녹음된 데이터가 없습니다.');
+      return;
+    }
+
+    setIsWaiting(true);
+
+    try {
+      // 1) WebSocket 오픈 (없으면 생성)
+      if (!wsRef.current || wsRef.current.readyState > 1) {
+        // 임시 WebSocket URL (실제 구현 시 환경변수에서 가져오기)
+        const base = 'wss://your-api-server.com'; // 실제 서버 URL로 변경 필요
+        const url = `${base}/wss/v1/audio?token=${encodeURIComponent(jwtRef.current)}`;
+        wsRef.current = new WebSocket(url);
+
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => reject(new Error('WS timeout')), 12000);
+          wsRef.current.onopen = () => { 
+            clearTimeout(timer); 
+            resolve(); 
+          };
+          wsRef.current.onerror = (e) => { 
+            clearTimeout(timer); 
+            reject(e); 
+          };
+        });
+        setWsReady(true);
+      }
+
+      // 2) start_conversation
+      wsRef.current.send(JSON.stringify({
+        event: 'start_conversation',
+        payload: { audio_config: { sample_rate: SAMPLE_RATE, encoding: ENCODING } },
+      }));
+
+      // 3) 녹음된 PCM을 덩어리로 전송 (너무 큰 버퍼는 분할)
+      //    16KB 단위로 분할 전송 (네트워크 안정성)
+      const big = Buffer.concat(frames);
+      const CHUNK = 16 * 1024;
+      for (let o = 0; o < big.length; o += CHUNK) {
+        const piece = big.subarray(o, Math.min(o + CHUNK, big.length));
+        wsRef.current.send(piece); // 바이너리 프레임
+      }
+
+      // 4) end_conversation
+      wsRef.current.send(JSON.stringify({ event: 'end_conversation', payload: {} }));
+
+      // (선택) 서버 응답 수신 대기 → "생각중" 문구 표시 유지
+      // wsRef.current.onmessage = (evt) => { ... AI 응답 표시/오디오 재생 ... };
+
+      // 2초 대기 후 다음 화면으로 이동
+      setTimeout(() => {
+        navigation.navigate('MakeStory4', { background: currentBackground });
+      }, 2000);
+
+    } catch (e) {
+      console.log('WebSocket 전송 실패:', e);
+      // 실패 시 UI 원복
+      setIsWaiting(false);
+    } finally {
+      // 한 번 전송 끝 → 버퍼 비우기
+      chunksRef.current = [];
+    }
   };
 
   const handleGoHome = () => navigation.navigate('Main');

@@ -7,7 +7,7 @@ export default function MainScreen() {
 
   const handleCreateStory = () => {
     // AITalk 화면으로 이동
-    navigation.navigate('Talk1');
+    navigation.navigate('MakeStory1');
   };
 
   const handleViewMore = () => {
